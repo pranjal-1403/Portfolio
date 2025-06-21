@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pranjal Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;}
+  body {
+    margin:0;font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#e0e7ff;min-height:100vh;line-height:1.6;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    scroll-behavior:smooth;
+  }
+  header,section,footer {
+    max-width:900px;margin:32px auto;
+    background:rgba(15,32,39,0.85);
+    border-radius:16px;
+    box-shadow:0 6px 28px rgba(139,92,246,0.3);
+    padding:32px 36px;
+  }
+  header{
+    text-align:center;position:sticky;top:0;z-index:1000;
+    box-shadow:0 4px 18px rgba(80,250,123,0.3);
+    backdrop-filter:saturate(180%) blur(12px);
+    margin-top:16px;margin-bottom:64px;
+  }
+  h1,h2 {margin:0 0 1rem;font-weight:700;}
+  h1 {
+    font-size:3rem;
+    background:linear-gradient(135deg,#50fa7b,#8be9fd);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    user-select:none;
+  }
+  h2 {
+    font-size:2rem;
+    text-align:center;
+    user-select:none;
+  }
+  p {
+    margin:0;
+    color:#8be9fd;
+    font-size:1.2rem;
+  }
+  .list {
+    display:grid;
+    gap:32px;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  }
+  .item {
+    user-select:none;
+  }
+  .bar-bg {
+    background:#1a2733;
+    border-radius:12px;
+    height:20px;
+    overflow:hidden;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 6px rgba(0,0,0,0.4);
+    margin-top:6px;
+  }
+  .bar-fill {
+    height:100%;
+    width:0%;
+    background:linear-gradient(135deg,#50fa7b,#8be9fd);
+    border-radius:12px 0 0 12px;
+    box-shadow:0 0 12px #50fa7baa;
+    transition:width 1.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .percentage {
+    text-align:right;
+    font-size:0.9rem;
+    font-weight:500;
+    color:#a0aec0;
+    margin-top:4px;
+  }
+  .timeline {
+    border-left:3px solid #50fa7baa;
+    padding-left:24px;
+    margin-left:12px;
+  }
+  .timeline-item {
+    position:relative;
+    margin-bottom:48px;
+    opacity:0.85;
+    transition:opacity 0.3s;
+  }
+  .timeline-item:last-child {
+    margin-bottom:0;
+  }
+  .timeline-item:hover {
+    opacity:1;
+  }
+  .timeline-item::before {
+    content:'';
+    position:absolute;
+    left:-15px;
+    top:4px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#50fa7b;
+    box-shadow:0 0 8px #50fa7bbb;
+    border:3px solid #0f2027;
+  }
+  .title {
+    font-weight:700;
+    color:#e6e6e6;
+    font-size:1.3rem;
+    margin-bottom:4px;
+  }
+  .subtitle {
+    font-weight:500;
+    color:#a0aec0;
+    margin-bottom:6px;
+    font-size:1rem;
+  }
+  .date {
+    font-style:italic;
+    font-size:0.825rem;
+    color:#718096;
+  }
+  .resume-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #50fa7b;
+    color: #0f2027;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: background-color 0.3s;
+  }
+  .resume-button:hover {
+    background-color: #8be9fd;
+  }
+  footer {
+    text-align:center;
+    color:#94a3b8;
+    font-size:0.9rem;
+    padding:24px 0;
+    user-select:none;
+  }
+  @media (max-width:640px){
+    h1{font-size:2rem;}
+    h2{font-size:1.6rem;}
+    .title{font-size:1.1rem;}
+    .subtitle{font-size:0.9rem;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+  const { useState, useEffect, useRef } = React;
+
+  function SkillBar({ name, level }) {
+    const [inView, setInView] = useState(false);
+    const ref = useRef();
+    useEffect(() => {
+      const obs = new IntersectionObserver(([entry]) => {
+        if(entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      }, {threshold:0.6});
+      if(ref.current) obs.observe(ref.current);
+      return () => obs.disconnect();
+    }, []);
+    return (
+      <div className="item" role="listitem">
+        <div className="title">{name}</div>
+        <div className="bar-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={parseInt(level)} tabIndex="0">
+          <div ref={ref} className="bar-fill" style={{width: inView ? level : '0'}}/>
+        </div>
+        <div className="percentage">{level}</div>
+      </div>
+    );
+  }
+
+  function Timeline({ data, title }) {
+    return (
+      <section aria-labelledby={`${title.toLowerCase()}-title`}>
+        <h2 id={`${title.toLowerCase()}-title`}>{title}</h2>
+        <div className="timeline" role="list">
+          {data.map(({title:name, subtitle, date}, i) => (
+            <div key={i} className="timeline-item" role="listitem" tabIndex={-1}>
+              <div className="title" tabIndex={0}>{name}</div>
+              <div className="subtitle" tabIndex={0}>{subtitle}</div>
+              <div className="date">{date}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  function Header({ name, tagline }) {
+    return (
+      <header role="banner" aria-label="Portfolio header">
+        <h1 tabIndex={0}>{name}</h1>
+        <p tabIndex={0}>{tagline}</p>
+        <a href="https://github.com/pranjal-1403/Resume-Pranjal/blob/main/Minimalist%20White%20and%20Grey%20Professional%20Resume_20250608_192018_0000.pdf" className="resume-button" download>Download Resume</a>
+      </header>
+    );
+  }
+
+  function Footer({ author }) {
+    const [year,setYear]=useState('');
+    useEffect(()=>setYear(new Date().getFullYear()),[]);
+    return <footer role="contentinfo" aria-label="Footer">&copy; {year} {author}. All rights reserved.</footer>;
+  }
+
+  function App(){
+    const skillsData = [
+      { name: 'JavaScript', level: '90%' },
+      { name: 'HTML5 & CSS3', level: '95%' },
+      { name: 'React.js', level: '85%' },
+      { name: 'Content Writing', level: '85%' },
+      { name: 'Node.js', level: '75%' },
+      { name: 'UI/UX Design', level: '65%' },
+      { name: 'Git & Version Control', level: '90%' },
+      { name: 'Responsive Design', level: '95%' },
+      { name: 'Digital Marketing & Social Media Advertising', level: '95%' }
+    ];
+    const educationData = [
+      { title: 'New Public College', subtitle: 'Intermediate in Commerce with Computer', date: 'March 2021' },
+      { title: 'DU RKFMA', subtitle: 'Diploma in Digital Marketing and Social Media Advertising', date: 'April 2022' },
+      { title: 'BBD University', subtitle: 'BCA with Cyber Security and Digital Forensics', date: 'August 2023 - August 2026' }
+    ];
+    const expData = [
+      { title: 'Warehouse Supervisor', subtitle: 'Sai Memory: Updating invoices and excel sheets, cold calling, product review and bulk order management', date: 'August 2021 - August 2022' },
+      { title: 'HR', subtitle: 'Advisors Solution: Shortlisting Resume of candidates, scheduling and conducting interviews, payroll management and job allocation', date: 'November 2022 - May 2024' }
+    ];
+    return <>
+      <Header name="Pranjal" tagline="Being human with a curious mind..!!" />
+      <main className="container" role="main">
+        <section aria-labelledby="skills-title">
+          <h2 id="skills-title">Skills</h2>
+          <div className="list" role="list">
+            {skillsData.map((s,i)=><SkillBar key={i} name={s.name} level={s.level}/>)}
+          </div>
+        </section>
+        <Timeline data={educationData} title="Education" />
+        <Timeline data={expData} title="Experience" />
+      </main>
+      <Footer author="Pranjal" />
+    </>
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
+</html>
